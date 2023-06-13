@@ -19,7 +19,7 @@ public class HomePage {
         suzuki.click();
     }
 
-    private void carSearch(){
+    public void carSearch(){
         carMarkClick();
         selectSuzukiMark();
     }
