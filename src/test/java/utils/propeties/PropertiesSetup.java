@@ -32,8 +32,16 @@ public class PropertiesSetup {
         return  getProperties().getProperty("chromedriverLocation");
     }
 
+    public static String getChromedriverRemoteLocation() {
+        return  getProperties().getProperty("chromedriverRemoteLocation");
+    }
+
     public static String getBaseUrl() {
         return  getProperties().getProperty("baseUrl");
+    }
+
+    public static String getGridUrl() {
+        return  PropertiesSetup.getProperties().getProperty("gridUrl");
     }
 
     public static boolean getIsRemote() {

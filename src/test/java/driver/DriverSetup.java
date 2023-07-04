@@ -1,13 +1,16 @@
 package driver;
 
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.events.EventFiringWebDriver;
 import utils.propeties.PropertiesSetup;
 
-import static java.awt.GraphicsEnvironment.headless;
+import java.util.concurrent.TimeUnit;
+
+import static utils.propeties.PropertiesSetup.getImplicitWaitTime;
+
 
 public class DriverSetup {
 
@@ -17,7 +20,7 @@ public class DriverSetup {
         this.isRemote = isRemote;
     }
 
-    private WebDriver getBrowswer(boolean headless){
+    private WebDriver getBrowser(boolean headless){
         if (isRemote) {
             WebDriver driver;
             System.setProperty("webdriver.chromedriver", PropertiesSetup.getChromedriverRemoteLocation());
@@ -50,11 +53,31 @@ public class DriverSetup {
         }
     }
 
-//    private WebDriver getRemoteDriver(){to fill in the body} // not use yet
+//    private WebDriver getRemoteDriver(DesiredCapabilities capabilities) {
+//        RemoteWebDriver remoteWebDriver;
+//        try {
+//            remoteWebDriver = new RemoteWebDriver(new URL(PropertiesSetup.getGridUrl(), capabilities));
+//        } catch (MalformedURLException e) {
+//            e.printStackTrace();
+//            throw new RuntimeException();
+//        }
+//        return remoteWebDriver;
+//    }
 
-    public static void setDriver() {
 
+    public static void setDriver(boolean headless) {
+        WebDriver driver;
+        driver = new DriverSetup(PropertiesSetup.getIsRemote()).getBrowser(headless);
+        driver = registerWebDriverEventListener(driver);
+        driver.manage().timeouts().implicitlyWait(getImplicitWaitTime(), TimeUnit.SECONDS);
+        driverThreadLocal.set(driver);
+        Thread.currentThread().setName("Thread " + Thread.currentThread().getId());
     }
+
+    public static WebDriver getDriver() {
+        return driverThreadLocal.get();
+    }
+
 
     public static void closeDriver() {
         driverThreadLocal.get().close();
@@ -62,15 +85,10 @@ public class DriverSetup {
         driverThreadLocal.remove();
     }
 
-
-
-
-
-
-
-
-
-
+    private synchronized static WebDriver registerWebDriverEventListener(WebDriver driver) {
+        EventFiringWebDriver eventFiringWebDriver = new EventFiringWebDriver(driver);
+        DriverEventL
+    }
 
 
 
