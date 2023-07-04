@@ -27,7 +27,6 @@ public class PropetiesLoader {
         return properties;
     }
 
-
     private void closeInputStream(InputStream inputStream) {
         try {
             inputStream.close();
