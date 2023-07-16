@@ -1,0 +1,9 @@
+isRemote=${isRemote}
+browswer=Chrome
+chromedriverLocationnnnnnnnnnnnn=D:\projekty\chromedriver\chromedriver.exe
+chromedriverLocation=D:/projekty/chromedriver/chromedriver.exe
+chromedriverRemoteLocation=/opt/chromedriver
+testDataPath=./src/test/resources/sources/testData.csv
+inputPath=./testInput/input.csv
+baseUrl=https://onet-${env}.pl
+baseOtoMotoUrl=https://www.otomoto.pl

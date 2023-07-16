@@ -5,6 +5,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
+import utils.listeners.DriverEventListener;
 import utils.propeties.PropertiesSetup;
 
 import java.util.concurrent.TimeUnit;
@@ -38,7 +39,7 @@ public class DriverSetup {
         } else {
             WebDriver driver;
             System.setProperty(ChromeDriverService.CHROME_DRIVER_SILENT_OUTPUT_PROPERTY, "true"); // Jeśli ustawisz tę właściwość na "true", to wyłączysz wyjście diagnostyczne (logi) ChromeDrivera na konsolę, co oznacza, że nie będą one widoczne podczas uruchamiania testów. Jest to przydatne, gdy chcesz zredukować ilość wyjścia diagnostycznego i utrzymać czystość logów podczas wykonywania automatycznych testów za pomocą ChromeDrivera.
-            System.setProperty("webdriver.chromedriver", PropertiesSetup.getChromedriverRemoteLocation());
+            System.setProperty("webdriver.chromedriver", PropertiesSetup.getChromedriverLocation());
             ChromeOptions options = new ChromeOptions();
             options.addArguments("--disable-setuid-sandbox");
             options.addArguments("--no-sandbox");
@@ -53,6 +54,21 @@ public class DriverSetup {
         }
     }
 
+//    private WebDriver getBrowser(){
+//            WebDriver driver;
+//            System.setProperty(ChromeDriverService.CHROME_DRIVER_SILENT_OUTPUT_PROPERTY, "true"); // Jeśli ustawisz tę właściwość na "true", to wyłączysz wyjście diagnostyczne (logi) ChromeDrivera na konsolę, co oznacza, że nie będą one widoczne podczas uruchamiania testów. Jest to przydatne, gdy chcesz zredukować ilość wyjścia diagnostycznego i utrzymać czystość logów podczas wykonywania automatycznych testów za pomocą ChromeDrivera.
+//            System.setProperty("webdriver.chromedriver", PropertiesSetup.getChromedriverLocation()); // -----------------
+////            System.setProperty("webdriver.chromedriver", "D:\\projekty\\chromedriver\\chromedriver.exe");
+//            ChromeOptions options = new ChromeOptions();
+//            options.addArguments("--disable-setuid-sandbox");
+//            options.addArguments("--no-sandbox");
+//            options.setExperimentalOption("useAutomationExtension", false);
+//            driver = new ChromeDriver(options);
+//            driver.manage().deleteAllCookies();
+//            return driver;
+//        }
+
+
 //    private WebDriver getRemoteDriver(DesiredCapabilities capabilities) {
 //        RemoteWebDriver remoteWebDriver;
 //        try {
@@ -64,6 +80,14 @@ public class DriverSetup {
 //        return remoteWebDriver;
 //    }
 
+//    public static void setDriver() {
+//        WebDriver driver;
+//        driver = new DriverSetup(PropertiesSetup.getIsRemote()).getBrowser();
+//        driver = registerWebDriverEventListener(driver);
+//        driver.manage().timeouts().implicitlyWait(getImplicitWaitTime(), TimeUnit.SECONDS);
+//        driverThreadLocal.set(driver);
+//        Thread.currentThread().setName("Thread " + Thread.currentThread().getId());
+//    }
 
     public static void setDriver(boolean headless) {
         WebDriver driver;
@@ -87,7 +111,8 @@ public class DriverSetup {
 
     private synchronized static WebDriver registerWebDriverEventListener(WebDriver driver) {
         EventFiringWebDriver eventFiringWebDriver = new EventFiringWebDriver(driver);
-        DriverEventL
+        DriverEventListener driverEventListener = new DriverEventListener();
+        return eventFiringWebDriver.register(driverEventListener);
     }
 
 

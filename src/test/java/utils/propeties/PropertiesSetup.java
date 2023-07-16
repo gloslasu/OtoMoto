@@ -40,6 +40,10 @@ public class PropertiesSetup {
         return  getProperties().getProperty("baseUrl");
     }
 
+    public static String getBaseOtoMotoUrl() {
+        return  getProperties().getProperty("baseOtoMotoUrl");
+    }
+
     public static String getGridUrl() {
         return  PropertiesSetup.getProperties().getProperty("gridUrl");
     }
@@ -63,6 +67,10 @@ public class PropertiesSetup {
 
     public static String getResultDataPath() {
         return  getProperties().getProperty("resultDataPath");
+    }
+
+    public static String getProcessIdLogPath() {
+        return getProperties().getProperty("processIdLogPath");
     }
 
     public static String getMockupsUrl() {

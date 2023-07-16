@@ -5,6 +5,7 @@
 
 package tests;
 
+import driver.DriverSetup;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,35 +13,80 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.*;
+import org.testng.annotations.*;
+import org.testng.asserts.SoftAssert;
+import utils.CommonUtil;
+import utils.ReportUtil;
+import utils.propeties.PropertiesLoader;
+import utils.propeties.PropertiesSetup;
 
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-public class BaseTests {
-    static WebDriver driver;
-    static WebDriverWait wait;
+import static utils.propeties.PropertiesSetup.getResultDataPath;
 
-    @BeforeAll
-    static void setUp(){
-        // WebDriver drives a browser natively, like a user would be do it.
-        driver = new ChromeDriver();
-        wait = new WebDriverWait(driver, 5); // Explicit wait
+public class BaseTests extends CommonUtil implements IHookable {
 
-        // we must set timeouts because without this our tests will fail
-        // Implicit wait: before every calling 'find element by..' we will wait 5 seconds to load all elements on the page.
-        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+    SoftAssert softAssert = new SoftAssert();
 
-        // we need to open the page in full screen because if the page is responsive it looks different with different screen sizes
-        driver.manage().window().maximize(); // setSize.(new Dimension(1920, 1080)); // we open in full HD resolution
+    @Override
+    public void run(IHookCallBack callBack, ITestResult testResult) {
+        callBack.runTestMethod(testResult);
+        if(testResult.getThrowable() != null) {
+            ReportUtil.takeScreenshot(testResult.getMethod().getMethodName());
+        }
+        ITestContext iTestContext = Reporter.getCurrentTestResult().getTestContext();
+        if (iTestContext.getAttribute("processId_" + Thread.currentThread().getId()) != null) {
+            ReportUtil.putProcessIdToAllureReport(iTestContext.getAttribute("processId_" + Thread.currentThread().getId()).toString());
+            }
+        }
+
+@BeforeSuite(groups = {"full_regression", "regression_limited", "short_check", "fiveHundred"})
+    public void beforeSuite() {
+        PropertiesLoader propertiesLoader = new PropertiesLoader();
+        Properties propertiesFromFile = propertiesLoader.getProperties("properties"); // powinno wstazywać na plik properties
+        PropertiesSetup.setProperties(propertiesFromFile);
+        clearTextFile(getResultDataPath());
     }
 
-    @BeforeEach
-    void clearCookies(){
-        driver.manage().deleteAllCookies();
+@AfterSuite(groups = {"full_regression", "regression_limited", "short_check", "fivehundred"})
+    public void afterSuite() {
+        saveEnvironmentPropetiesFile();
     }
 
-    @AfterAll
-    static void turnDown(){
-        driver.quit(); // close all tabs/windows and WebDriver
+@BeforeTest(groups = {"aftertest_standard", "aftertest_limited"})
+    public void beforeTest() {
+        PropertiesLoader propertiesLoader = new PropertiesLoader();
+        Properties propertiesFromFile = propertiesLoader.getProperties("properties");
+        PropertiesSetup.setProperties(propertiesFromFile);
     }
+
+@BeforeMethod(groups = {"aftertest_standard", "aftertest_limited"})
+    public void beforeAfterTestMethod() {
+        Thread.currentThread().setName("Thread" + Thread.currentThread().getId());
+    }
+
+@BeforeMethod(groups = {"full_regression", "regression_limited", "short_check", "fivehundred"})
+    public void beforeMethod() {
+        // setDriver i getDriver jest jak testuje się na przeglądarce
+//    DriverSetup.setDriver(true); // false - tryb graficzny. true - tryb headless
+    DriverSetup.setDriver(false);
+    DriverSetup.getDriver();
+  }
+
+
+  @AfterMethod(groups = {"full_regression", "regression_limited", "short_check", "fivehundred"})
+    public void afterMethod() {
+//        DriverSetup.closeDriver();
+  }
+
+//  @AfterTest
+//    public void afterTest(){
+//        softAssert.assertAll();
+//  }
 
 }
+
+
+

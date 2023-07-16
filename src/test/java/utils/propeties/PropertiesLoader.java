@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-public class PropetiesLoader {
+public class PropertiesLoader {
 
-    public Properties getPropeties(String propetiesFileName) {
+    public Properties getProperties(String propetiesFileName) {
 
         InputStream inputStream = null;
         Properties properties = new Properties();
